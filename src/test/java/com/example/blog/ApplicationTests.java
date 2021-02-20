@@ -37,28 +37,10 @@ class ApplicationTests {
 		System.out.println(typeService.getTypeByName("JVM"));
 
 		System.out.println(typeService.getType(1L));
-
 	}
 
 	@Test
 	void BlogServiceTest() {
-
-		/*System.out.println(blogService.listBlog(4,1));
-		System.out.println(blogService.listBlog(4,1).getClass());*/
-
-//		System.out.println(blogService.getBlog(1L));
-
-		/*		System.out.println(blogService.listBlogByBlogQuery(new SearchBlogsDTO("反",1L,false)));*/
-
-		/*		System.out.println(blogDao.getAllBlogByTypeId(3L,1,10));*/
-
-		/*SearchBlogsDTO blogsDTO = new SearchBlogsDTO();
-		blogsDTO.setTitle("%java%");
-		System.out.println(blogDao.getAllBlogQuery(blogsDTO));*/
-
-//		System.out.println(blogDao.countBlog());
-
-//		System.out.println(blogDao.getBlogDate());
 
 		System.out.println(blogDao.listBlogByDate("2020/04"));
 	}
