@@ -30,3 +30,4 @@ build/
 ### VS Code ###
 .vscode/
 /src/main/resources/application-pro.yml
+/src/test/java/com.example.blog/ApplicationTests
