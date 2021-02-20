@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.blog.dao.BlogDao">
+
+    <resultMap id="BlogVO" type="com.example.blog.vo.BlogsVO">
+        <id property="id" column="id"/>
+        <result property="createTime" column="create_Time"/>
+        <result property="updateTime" column="update_Time"/>
+        <result property="title" column="title"/>
+        <result property="views" column="views"/>
+        <result property="typeId" column="type_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="description" column="description"/>
+        <result property="original" column="is_original"/>
+        <result property="commented" column="is_commented"/>
+        <result property="published" column="is_published"/>
+        <result property="recommend" column="is_recommend"/>
+        <association property="type" javaType="Type">
+            <result property="name" column="name"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="Blog" type="blog">
+        <id property="id" column="id"/>
+        <result property="createTime" column="create_Time"/>
+        <result property="updateTime" column="update_Time"/>
+        <result property="title" column="title"/>
+        <result property="views" column="views"/>
+        <result property="typeId" column="type_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="description" column="description"/>
+        <result property="original" column="is_original"/>
+        <result property="commented" column="is_commented"/>
+        <result property="published" column="is_published"/>
+        <result property="recommend" column="is_recommend"/>
+        <result property="content" column="content"/>
+        <association property="type" javaType="Type">
+            <id property="id" column="tid"/>
+            <result property="name" column="name"/>
+        </association>
+    </resultMap>
+
+    <select id="getBlogById" resultMap="Blog">
+        select t_blog.id,
+               t_blog.create_time,
+               t_blog.update_time,
+               t_blog.title,
+               t_blog.views,
+               t_blog.type_id,
+               t_blog.user_id,
+               t_blog.description,
+               t_blog.is_commented,
+               t_blog.is_published,
+               t_blog.is_recommend,
+               t_blog.is_original,
+               t_blog.content,
+               t_type.name,
+               t_type.id as tid
+        from t_blog,
+             t_type
+        where t_blog.id = #{id}
+          and t_type.id = t_blog.type_id
+    </select>
+
+    <select id="getAllBlog" resultMap="BlogVO">
+        select t_blog.id,
+               t_blog.create_time,
+               t_blog.update_time,
+               t_blog.title,
+               t_blog.views,
+               t_blog.type_id,
+               t_blog.user_id,
+               t_blog.description,
+               t_blog.is_commented,
+               t_blog.is_published,
+               t_blog.is_recommend,
+               t_blog.is_original,
+               t_type.name
+        from t_blog,
+             t_type
+        where t_type.id = t_blog.type_id
+        order by t_blog.update_time desc
+    </select>
+
+    <select id="getAllBlogQuery" resultMap="BlogVO">
+        select t_blog.id, t_blog.create_time, t_blog.update_time, t_blog.title,
+        t_blog.views, t_blog.type_id, t_blog.user_id, t_blog.description, t_blog.is_commented, t_blog.is_published,
+        t_blog.is_recommend, t_blog.is_original,t_blog.content,t_type.name
+        from t_blog,t_type
+        <where>
+            <if test="1 == 1">
+                t_type.id=t_blog.type_id
+            </if>
+            <if test="typeId != null">
+                and t_blog.type_id = #{typeId}
+            </if>
+            <if test="recommend != null">
+                and t_blog.is_recommend = #{recommend}
+            </if>
+            <if test="title != null">
+                and t_blog.title like #{title}
+            </if>
+        </where>
+        order by t_blog.update_time desc
+    </select>
+
+    <select id="getAllBlogSearch" resultMap="BlogVO">
+        select t_blog.id,
+               t_blog.create_time,
+               t_blog.update_time,
+               t_blog.title,
+               t_blog.views,
+               t_blog.type_id,
+               t_blog.user_id,
+               t_blog.description,
+               t_blog.is_commented,
+               t_blog.is_published,
+               t_blog.is_recommend,
+               t_blog.is_original,
+               t_type.name
+        from t_blog,
+             t_type
+        where t_blog.title like #{param1}
+          and t_blog.type_id = t_type.id
+        order by t_blog.update_time desc
+    </select>
+
+    <select id="getAllBlogByTypeId" resultMap="BlogVO">
+        select t_blog.id,
+               t_blog.create_time,
+               t_blog.update_time,
+               t_blog.title,
+               t_blog.views,
+               t_blog.type_id,
+               t_blog.user_id,
+               t_blog.description,
+               t_blog.is_commented,
+               t_blog.is_published,
+               t_blog.is_recommend,
+               t_blog.is_original,
+               t_blog.content,
+               t_type.name
+        from t_blog,
+             t_type
+        where t_blog.type_id = #{id}
+          and t_blog.type_id = t_type.id
+        order by t_blog.update_time desc
+    </select>
+
+    <select id="getAllRecommendBlog" resultMap="BlogVO">
+        select t_blog.id,
+               t_blog.create_time,
+               t_blog.update_time,
+               t_blog.title,
+               t_blog.views,
+               t_blog.type_id,
+               t_blog.user_id,
+               t_blog.description,
+               t_blog.is_commented,
+               t_blog.is_published,
+               t_blog.is_recommend,
+               t_blog.is_original,
+               t_type.name
+        from t_blog,
+             t_type
+        where t_type.id = t_blog.type_id
+          and t_blog.is_recommend = 1
+        limit 0,#{size};
+    </select>
+
+    <select id="countBlog" resultType="long">
+        select count(*)
+        from t_blog
+    </select>
+
+    <select id="getBlogDate" resultType="string">
+        select distinct date_format(b.create_time, '%Y/%m') as date
+        from t_blog b
+        order by date desc;
+    </select>
+
+
+    <resultMap id="BlogDate" type="blog">
+        <id column="id" property="id"/>
+        <result property="createTime" column="create_Time"/>
+        <result property="updateTime" column="update_Time"/>
+        <result property="title" column="title"/>
+    </resultMap>
+
+
+    <select id="listBlogByDate" parameterType="String" resultMap="BlogDate">
+        select id, create_time, update_time, title
+        from t_blog b
+        where date_format(b.create_time, '%Y/%m') = #{yearAndMonth};
+    </select>
+
+
+    <insert id="saveBlog" parameterType="Blog">
+        insert into blog.t_blog (create_time, update_time, content, title, views, type_id, user_id, description,
+                                 is_commented, is_published, is_recommend, is_original)
+        values (#{createTime}, #{updateTime}, #{content}, #{title}, #{views}, #{typeId}, #{userId}, #{description},
+                #{commented}, #{published}, #{recommend}, #{original});
+    </insert>
+
+    <update id="updateBlog" parameterType="Blog">
+        update blog.t_blog
+        set is_published = #{published},
+            is_recommend = #{recommend},
+            is_commented=#{commented},
+            is_recommend=#{recommend},
+            title        = #{title},
+            content      = #{content},
+            type_id      = #{typeId},
+            description  = #{description},
+            update_time  = #{updateTime}
+        where id = #{id};
+    </update>
+
+    <update id="updateBlogView" parameterType="Long">
+        update t_blog
+        set views = views + 1
+        where id = #{id};
+    </update>
+
+    <delete id="deleteBlogById">
+        delete
+        from blog.t_blog
+        where id = #{id}
+    </delete>
+
+</mapper>

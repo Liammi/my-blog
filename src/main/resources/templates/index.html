@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Standard Meta -->
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+    <!-- Site Properties -->
+    <title>Homepage</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css">
+
+    <!--文章的排版-->
+    <link rel="stylesheet" th:href="@{/css/typo.css}">
+    <!--详情页的动态效果-->
+    <link rel="stylesheet" th:href="@{/css/animate.css}">
+    <!--代码高亮-->
+    <link rel="stylesheet" th:href="@{/lib/prism/prism.css}">
+    <!--自动生成目录-->
+    <link rel="stylesheet" th:href="@{/lib/tocbot/tocbot.css}">
+    <link rel="stylesheet" th:href="@{/css/me.css}">
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.2/dist/jquery.min.js"></script>
+    <script src="../static/lib/prism/prism.js" th:src="@{/lib/prism/prism.js}"></script>
+    <script src="../static/lib/tocbot/tocbot.min.js" th:src="@{/lib/tocbot/tocbot.min.js}"></script>
+    <script src="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js"></script>
+    <script>
+        $(document)
+            .ready(function () {
+
+                // fix menu when passed
+                $('.masthead')
+                    .visibility({
+                        once: false,
+                        onBottomPassed: function () {
+                            $('.fixed.menu').transition('fade in');
+                        },
+                        onBottomPassedReverse: function () {
+                            $('.fixed.menu').transition('fade out');
+                        }
+                    })
+                ;
+
+            })
+        ;
+    </script>
+</head>
+
+<body>
+
+
+<nav th:replace="_fragments :: menu(1)" class="ui stackable menu" style="height: 50px;background:transparent;">
+    <div class="ui container">
+        <a href="#" th:href="@{/home}" class="m-item item m-mobile-hide" th:classappend="${n==1} ? 'active'"><i
+                class="home icon"></i>首页</a>
+        <a href="#" th:href="@{/types}" class="m-item item m-mobile-hide" th:classappend="${n==2} ? 'active'"><i
+                class="idea icon"></i>分类</a>
+        <a href="#" th:href="@{/archives}" class="m-item item m-mobile-hide" th:classappend="${n==3} ? 'active'"><i
+                class="calendar alternate icon"></i>归档</a>
+        <a href="#" th:href="@{/about}" class="m-item item m-mobile-hide" th:classappend="${n==4} ? 'active'"><i
+                class="cogs icon"></i>关于</a>
+        <a href="#" th:href="@{/admin}" target="_blank" class="m-item item m-mobile-hide"><i
+                class="file icon"></i>管理</a>
+        <div class="right item m-item  m-mobile-hide">
+            <form name="search" action="#" th:action="@{/search}" method="get" target="_blank">
+                <div class="ui icon inverted  input m-margin-tb-tiny">
+                    <input type="text" name="query" placeholder="Search...." th:value="${query}">
+                    <i onclick="document.forms['search'].submit()" class="search link icon"></i>
+                </div>
+            </form>
+        </div>
+        <a href="#" class="ui menu toggle black icon button m-right-top m-mobile-show">
+            <i class="sidebar icon"></i>
+        </a>
+    </div>
+</nav>
+
+<!-- Page Contents -->
+<div class="m-container-big m-padded-tb-large animated fadeIn">
+    <div class="m-container-big">
+        <div class="ui negative message m-mobile-show">
+            <i class="close icon"></i>
+            <div class="header">welcome !</div>
+            <p>It is recommended to use computer browser for better browsing experience</p>
+        </div>
+        <div class="ui stackable grid ">
+            <!-- 左边的top-->
+            <div class="five wide column">
+                <div class="ui inverted segments">
+                    <div class="ui segment">
+                        <div class="ui container" style="margin-left: auto;margin-right: auto;">
+                            <i class="code icon"></i><span th:text="${pageInfo.total}+' blogs'"
+                                                           class="m-text-thin m-text-spaced m-opacity-tiny"
+                                                           style="font-size: 13px"></span>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+                <!-- 分类-->
+                <div class="ui  segments m-mobile-hide m-margin-top">
+                    <div class="ui segment">
+                        <div class="ui two column grid">
+                            <div class=" column">
+                                <font size="1px">Classification</font>
+                            </div>
+                            <div class=" right aligned column">
+                                <a href="#" th:href="@{/types}"><font size="1px">more</font> <i
+                                        class="angle double right icon"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui black segment">
+                        <div class="ui fluid vertical menu">
+                            <a href="#" th:href="@{/type/{id}(id=${type.id})}" class="item"
+                               th:each="type:${types}">
+                                <span th:text="${type.name}">学习日志</span>
+                                <div class="ui  blue  basic left pointing label" th:text="${type.blogList.size()}">13
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!--最新推荐-->
+                <div class="ui segments m-margin-top m-mobile-hide">
+                    <div class="ui  segment ">
+                        <i class="bookmark icon"></i>Recommend
+                    </div>
+                    <div class="ui segment" th:each="blog : ${recommendBlog}">
+                        <a href="#" th:href="@{/blog/{id}(id=${blog.id})}" target="_blank"
+                           class="m-black m-text-thin" th:text="${blog.title}">题目</a>
+                    </div>
+                </div>
+
+            </div>
+            <!--右边博客列表-->
+            <div class="eleven wide column">
+                <!-- header-->
+                <div class="ui top attached segment">
+                </div>
+                <!--content-->
+                <div class="ui attached segment">
+                    <div class="ui padded vertical segment m-padded-tb-big" th:each="blog:${pageInfo.list}">
+                        <div class="ui mobile reversed stackable grid">
+                            <div class="sixteen wide column">
+                                <h3 class="ui header">
+                                    <a href="#" th:href="@{/blog/{id}(id=${blog.id})}" class="m-black"
+                                       th:text="${blog.title}" target="_blank">你是谁?</a></h3>
+                                <p class="m-text" th:text="|${blog.description}......
+
+                                    |" style="word-break: break-all">我是谁…...</p>
+                                <div class="ui grid">
+                                    <div class="eleven wide column">
+                                        <div class="ui mini horizontal link list">
+                                            <div class="item">
+                                                <i class="calendar icon"></i><span
+                                                    th:text="${#dates.format(blog.updateTime,'yyyy-MM-dd')}">2017-10-01</span>
+                                            </div>
+                                            <div class="item">
+                                                <i class="eye icon"></i> <span th:text="${blog.views}">2342</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="five wide column">
+                                        <a href="#"
+                                           class="ui blue basic label m-padded-mini m-text-thin center aligned"
+                                           th:href="@{/type/{id}(id=${blog.typeId})}"
+                                           th:text="${blog.type.name}">text</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--footer-->
+                <div class="ui bottom attached segment" th:if="${pageInfo.total}>1">
+                    <div class="ui middle aligned two column grid">
+                        <div class="four wide column">
+                            <a href="#" th:href="@{/home(pageNum=${pageInfo.pageNum}-1)}"
+                               th:unless="${pageInfo.isFirstPage}"
+                               class="ui mini teal basic button">上一页</a>
+                        </div>
+                        <div class="eight wide column center aligned">
+                            <p><span th:text="${pageInfo.pageNum}">1</span> / <span th:text="${pageInfo.pages}">9</span>
+                            </p>
+                        </div>
+                        <div class="four wide column right aligned">
+                            <a href="#" th:href="@{/home(pageNum=${pageInfo.pageNum}+1)}"
+                               th:unless="${pageInfo.isLastPage}"
+                               class="ui mini teal basic button">下一页</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--底部footer-->
+<footer th:replace="_fragments :: footer" class="ui inverted vertical segment m-padded-tb-massive">
+
+</footer>
+<script>
+    //适应手机页面
+    $('.menu.toggle').click(function () {
+        $('.m-item').toggleClass('m-mobile-hide');
+    });
+    $('.message .close')
+        .on('click', function () {
+            $(this)
+                .closest('.message')
+                .transition('fade')
+            ;
+        });
+    $(function opinion() {
+        if ((navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i))) {
+            $('nav').attr("style", "")
+        } else {
+        }
+    });
+</script>
+</body>
+
+</html>
